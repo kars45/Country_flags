@@ -1,0 +1,195 @@
+<html>
+    <head>
+        <title>Country Explorer</title>
+        <style>
+            * {
+                 box-sizing: border-box;
+            }
+            .header {
+                background-color: #1751a7;
+                color: #ffffff;
+                padding: 25px;
+            }
+
+            .footer {
+                position: relative;
+                left:0;
+                bottom: 0;
+                width: 100%;
+                background-color: #1751a7;
+                color: #ffffff;
+                text-align: center;
+                font-size: 12px;
+                padding: 15px;
+
+
+            }
+
+            .work {
+                display:flex;
+                justify-content:center;
+                background:rgb(255, 255, 255);
+                height:500px;
+            }
+            .sear{
+                
+                flex:10%;
+               
+                background-color:rgb(150, 220, 223);
+                padding:10px;
+                padding-left: 50px;
+                padding-top: 100px;
+            }
+               
+           
+            
+
+            #card {
+                flex:70%;
+                padding:10px;
+                padding-left:30px;
+                background-color:rgb(147, 152, 196);
+                margin-right: 0px;
+            }
+
+         
+
+
+            /* For mobile phones: */
+            [class*="work"] {
+                width: 100%;
+            }
+
+            @media only screen and (min-width: 600px) {
+            /* For tablets: */
+              
+            }
+            @media only screen and (min-width: 768px) {
+             /* For desktop: */
+                
+            }
+
+        </style>
+    </head>    
+    <body onload="load()">
+       <div class = "header">
+           <h1>Country Explorer</h1>
+       </div>    
+       <div class = "work">
+           
+           <div class="sear">
+                <h2>Search</h2>  
+                <input type = "text" id = "countryname" name = "countrysearch" style = "width: 500px;"><br><br>
+                <input type = "submit" value="Submit" onclick="getInfo()">
+           </div>
+            
+           
+           
+            <div id = "card">
+                
+            </div>
+            
+        </div>
+       
+      <div class = "footer">
+          <h3>All info from https://restcountries.eu/</h3>
+          <h3>Contact:</h3>
+          <p>Karthik Srinivas K</p>
+          <p>Phone No: 9500315485</p>
+      </div>
+       
+       
+       
+       <script>
+           
+           function golink() {
+               var val = document.getElementById('countryname').value;
+               var qu = "?para1=" + val;
+               window.location.href = "pagedetails.html"+qu;
+           }
+           function logError(error) {
+                console.log('Looks like there was a problem: \n', error);
+            }
+           function validateResponse(response) {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response;
+            }
+            
+            function readResponseAsBlob(response) {
+                return response.blob();
+            }
+            function showImage(responseAsBlob) {
+                 var imgElem = document.getElementById("card");
+                 var imgUrl = URL.createObjectURL(responseAsBlob);
+                 var im = document.createElement("img");
+                 im.src = imgUrl;
+                 im.style.height ="auto"; 
+                 im.style.width = "150px";
+                 im.style.padding = "20px";
+                 imgElem.appendChild(im);
+            }
+
+            function readResponseAsJSON(response) {
+                return response.json();
+            }
+            
+            function fetchImage(path) {
+                fetch(path)
+                .then(validateResponse)
+                .then(readResponseAsBlob)
+                .then(showImage)
+                .catch(logError)
+            }
+
+            function logResult(result) {
+                
+                result.forEach(function(user){
+                    var output = `<h3>Country: </h3>Name:${user.name}`;
+                            
+                            
+                            fla = user.flag;
+                            var a = document.createElement("a");
+                            a.href = "pagedetails.html"+"?para1="+user.name;
+                            a.innerHTML = "Country:"+user.name;
+                            a.style.padding = "20px";
+                           // var para = document.createElement("p");
+                           // var o = document.createTextNode("Country:"+user.name);
+                            //para.appendChild(o);
+                            var ca = document.getElementById("card");
+                            ca.appendChild(a);    
+                            fetchImage(fla);
+                            
+                    })
+            }
+
+           
+           function getInfo() {
+            sessionStorage.removeItem('search');
+                var temp,fla,out;
+                
+                temp = document.getElementById('countryname').value;
+                var url = "https://restcountries.eu/rest/v2/name/"+temp;
+                sessionStorage.setItem("search",temp);
+                fetch(url)
+                .then(validateResponse) 
+                .then(readResponseAsJSON) 
+                .then(logResult) 
+                .catch(logError);
+           }
+           function load() {
+                var temp = sessionStorage.getItem("search");
+                var url = "https://restcountries.eu/rest/v2/name/"+temp;
+              
+                fetch(url)
+                .then(validateResponse) 
+                .then(readResponseAsJSON) 
+                .then(logResult) 
+                .catch(logError);
+
+           }
+       </script>
+
+    </body>
+</html>

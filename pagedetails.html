@@ -1,0 +1,152 @@
+<html>
+    <head>
+        <style>
+            .header {
+                background-color: #1751a7;
+                color: #ffffff;
+                padding: 25px;
+            }
+
+            .footer {
+                position: relative;
+                left:0;
+                bottom: 0;
+                width: 100%;
+                background-color: #1751a7;
+                color: #ffffff;
+                text-align: center;
+                font-size: 12px;
+                padding: 15px;
+
+
+            } 
+            #back {
+                padding-left: 1350px;
+                font-size: 20px;
+                
+            }   
+            #container {
+                padding: 50px;
+                column-count: 2;
+                column-gap: auto;
+                column-rule-style: solid;
+                column-width: auto;
+
+            }
+        </style>
+    </head>
+    <body onload="detail()">
+            <div class = "header">
+                    <h1>Country Explorer</h1>
+                    <div id = "back" onclick = "goback()">
+                            <p>Go back</p>    
+                    </div>
+                </div> 
+        
+        <div id="container" >
+            <div id="output">
+
+            </div>
+                
+
+        </div>
+        
+        <div class = "footer">
+                <h3>All info from https://restcountries.eu/</h3>
+                <h3>Contact:</h3>
+                <p>Karthik Srinivas K</p>
+                <p>Phone No: 9500315485</p>
+            </div>
+        <script>
+            function goback() {
+                window.history.go(-1);
+            }
+
+            function detail() {
+                var temp,fla,out;
+                var queryString = decodeURIComponent(window.location.search);
+                temp = queryString.substring(7);
+                fetch("https://restcountries.eu/rest/v2/all")
+                .then((res) => res.json())
+                .then((data) => {
+                    let output = '<h2>Details</h2>';
+                    data.forEach(function(user){
+                        if(temp == user.name) {
+                            output += `
+                            <ul>
+                                <li>Name:${user.name}</li>
+                                <li>Top Level Domain:${user.topLevelDomain}</li>
+                                <li>Alpha2Code:${user.alpha2Code}</li>
+                                <li>Alpha3Code:${user.alpha3Code}</li>
+                                <li>Calling Codes:${user.callingCodes}</li>
+                                <li>Capital:${user.capital}</li>
+                                <li>Alt Spellings:${user.altSpellings}</li>
+                                <li>Region:${user.region}</li>
+                                <li>Subregion:${user.subregion}</li>
+                                <li>Population:${user.population}</li>
+                                <li>Latitude and Longitude:${user.latlng}</li>
+                                <li>Demonym:${user.demonym}</li>
+                                <li>Area:${user.area}</li>
+                                <li>Gini:${user.gini}</li>
+                                <li>Time Zones:${user.timezones}</li>
+                                <li>Borders:${user.borders}</li>
+                                <li>Native Name:${user.nativeName}</li>
+                                <li>Numeric Code:${user.numericCode}</li>
+                                <li>Currencies:<ol><li>Code:${user.currencies[0]["code"]}</li>
+                                    <li>Name:${user.currencies[0]["name"]}</li>
+                                    <li>Symbol:${user.currencies[0]["symbol"]}</li>
+                                    </ol></li>
+                                <li>Languages:<ol><li>ISO639_1:${user.languages[0]["iso639_1"]}</li>
+                                    <li>ISO639_2:${user.languages[0]["iso639_2"]}</li>
+                                    <li>Name:${user.languages[0]["name"]}</li>
+                                    <li>Native Name${user.languages[0]["nativeName"]}</li>
+                                    </ol></li>
+                                    
+                                    
+                                        <li>CIOC:${user.cioc}</li>  
+                                        <li>Translations<ol>
+                                <li>de:${user.translations["de"]}</li>
+                                <li>es:${user.translations["es"]}</li>
+                                <li>fr:${user.translations["fr"]}</li>
+                                <li>ja:${user.translations["ja"]}</li>
+                                <li>it:${user.translations["it"]}</li>
+                                <li>br:${user.translations["br"]}</li>
+                                <li>pt:${user.translations["pt"]}</li>
+                                    </ol></li>
+                                     
+                                
+                            </ul>`;
+                               for(var i=0;i<user.regionalBlocs.length;i++){
+                                    if(i==0) {
+                                        output +=`<ul><li>RegionalBlocs:</li>`;
+                                    }
+                                    output +=`<ol>
+                                      <li>Acronym:${user.regionalBlocs[i]["acronym"]}</li>
+                                      <li>Name:${user.regionalBlocs[i]["name"]}</li> 
+                                      <li>Other Acronyms:${user.regionalBlocs[i]["otherAcronyms"]}</li>
+                                      <li>Other Names:${user.regionalBlocs[i]["otherNames"]}</li> 
+                                    </ol>`
+                                }
+                                if(user.regionalBlocs.length >0) {
+                                      output += `</ul>`;  
+                                }
+                                    
+                                      
+                              
+                                    
+                            fla = user.flag;
+                            //fetchImage(fla);
+                            
+                        }
+                            
+                    }
+                    );
+                     document.getElementById('output').innerHTML = output;
+                     
+                    }
+                )
+            }
+        </script>
+    </body>
+</html>
+
