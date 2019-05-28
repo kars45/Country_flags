@@ -12,7 +12,7 @@
             }
 
             .footer {
-                position: relative;
+                position: fixed;
                 left:0;
                 bottom: 0;
                 width: 100%;
@@ -24,18 +24,19 @@
 
 
             }
-
+            /*Main*/
             .work {
+                
                 display:flex;
                 justify-content:center;
                 background:rgb(255, 255, 255);
-                height:500px;
+                height:auto;
             }
             .sear{
                 
                 flex:10%;
                
-                background-color:rgb(150, 220, 223);
+                
                 padding:10px;
                 padding-left: 50px;
                 padding-top: 100px;
@@ -44,11 +45,14 @@
            
             
 
-            #card {
+            #cards {
                 flex:70%;
+                flex-wrap: wrap;
+                display:flex;
                 padding:10px;
+                
                 padding-left:30px;
-                background-color:rgb(147, 152, 196);
+                
                 margin-right: 0px;
             }
 
@@ -80,12 +84,13 @@
            <div class="sear">
                 <h2>Search</h2>  
                 <input type = "text" id = "countryname" name = "countrysearch" style = "width: 500px;"><br><br>
+                <input type = "submit" value="Clear" onclick="clevalue()">
                 <input type = "submit" value="Submit" onclick="getInfo()">
            </div>
             
            
            
-            <div id = "card">
+            <div id = "cards">
                 
             </div>
             
@@ -101,12 +106,12 @@
        
        
        <script>
-           
-           function golink() {
-               var val = document.getElementById('countryname').value;
-               var qu = "?para1=" + val;
-               window.location.href = "pagedetails.html"+qu;
+           /*clevalue() is used to reload the page and at the same clear the previous state"*/
+           function clevalue(){
+               sessionStorage.clear();
+               window.location.reload(true);
            }
+          
            function logError(error) {
                 console.log('Looks like there was a problem: \n', error);
             }
@@ -116,57 +121,47 @@
                 }
                 return response;
             }
-            
-            function readResponseAsBlob(response) {
-                return response.blob();
-            }
-            function showImage(responseAsBlob) {
-                 var imgElem = document.getElementById("card");
-                 var imgUrl = URL.createObjectURL(responseAsBlob);
-                 var im = document.createElement("img");
-                 im.src = imgUrl;
-                 im.style.height ="auto"; 
-                 im.style.width = "150px";
-                 im.style.padding = "20px";
-                 imgElem.appendChild(im);
-            }
-
+           
             function readResponseAsJSON(response) {
                 return response.json();
             }
-            
-            function fetchImage(path) {
-                fetch(path)
-                .then(validateResponse)
-                .then(readResponseAsBlob)
-                .then(showImage)
-                .catch(logError)
-            }
 
             function logResult(result) {
-                
+                //DOM based operations are done here to create cards dynamically
                 result.forEach(function(user){
                     var output = `<h3>Country: </h3>Name:${user.name}`;
-                            
-                            
-                            fla = user.flag;
-                            var a = document.createElement("a");
-                            a.href = "pagedetails.html"+"?para1="+user.name;
-                            a.innerHTML = "Country:"+user.name;
-                            a.style.padding = "20px";
-                           // var para = document.createElement("p");
-                           // var o = document.createTextNode("Country:"+user.name);
-                            //para.appendChild(o);
-                            var ca = document.getElementById("card");
-                            ca.appendChild(a);    
-                            fetchImage(fla);
-                            
+                    var a = document.createElement("a");
+                    a.href = "pagedetails.html"+"?para1="+user.name;
+                    var para =document.createElement("p"); 
+                    var tex = document.createTextNode("Country:"+user.name);
+                    para.appendChild(tex);       
+                    a.setAttribute("style","background-color: white;height:150px;width:150px;padding:auto;margin:25px;")
+                    a.appendChild(para); 
+                    fla = user.flag;
+                    fetch(fla)
+                    .then((resp) =>resp.blob())
+                    .then((data) => {
+                        
+                    
+                    var imgUrl = URL.createObjectURL(data);
+                    var im = document.createElement("img");
+                    im.src = imgUrl;
+                    im.style.height ="auto"; 
+                    im.style.width = "100px";
+                    im.style.padding = "10px";
+                   
+                    a.appendChild(im);
+                    var mp = document.getElementById("cards");
+                    mp.appendChild(a);        
                     })
+                  
+                            
+                })
             }
 
            
            function getInfo() {
-            sessionStorage.removeItem('search');
+                sessionStorage.clear();
                 var temp,fla,out;
                 
                 temp = document.getElementById('countryname').value;
@@ -179,7 +174,8 @@
                 .catch(logError);
            }
            function load() {
-                var temp = sessionStorage.getItem("search");
+                var temp = sessionStorage.getItem("search"); //to store the state 
+                if(temp) {
                 var url = "https://restcountries.eu/rest/v2/name/"+temp;
               
                 fetch(url)
@@ -187,8 +183,10 @@
                 .then(readResponseAsJSON) 
                 .then(logResult) 
                 .catch(logError);
+                 }
 
            }
+           
        </script>
 
     </body>

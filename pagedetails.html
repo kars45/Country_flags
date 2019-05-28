@@ -8,7 +8,7 @@
             }
 
             .footer {
-                position: relative;
+                position: fixed;
                 left:0;
                 bottom: 0;
                 width: 100%;
@@ -31,6 +31,7 @@
                 column-gap: auto;
                 column-rule-style: solid;
                 column-width: auto;
+                height: auto;
 
             }
         </style>
@@ -58,10 +59,11 @@
                 <p>Phone No: 9500315485</p>
             </div>
         <script>
+            //function to go back to the previous window 
             function goback() {
                 window.history.go(-1);
             }
-
+            //function to print the details    
             function detail() {
                 var temp,fla,out;
                 var queryString = decodeURIComponent(window.location.search);
